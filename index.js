@@ -6,12 +6,13 @@ const socketIO = require("socket.io");
 const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
-app.set("port", 5000);
+const port = process.env.PORT || 5000;
+app.set("port", port);
 app.use("/", express.static(__dirname + "/static"));
 // Routing
 
 // Starts the server.
-server.listen(5000, function () {
+server.listen(port, function () {
     console.log("Starting server on port 5000");
 });
 
