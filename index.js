@@ -30,6 +30,9 @@ io.on('connection', function (socket) {
         player.y = data.pos.y;
         player.size = data.size;
     });
+    socket.on('disconnect', () => {
+        delete players[socket.id];
+      });
 });
 setInterval(function () {
     io.sockets.emit('state', players);

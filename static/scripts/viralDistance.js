@@ -41,6 +41,7 @@
     function byggSpiller(pos, size) {
         let dir = dcl.vector(0, 0);
         let speed = 4;
+        let color = dcl.color(dcl.randomi(128, 255), dcl.randomi(128, 255), dcl.randomi(128, 255));
         return {
             getPos: function () {
                 return pos;
@@ -58,7 +59,7 @@
                 pos = dir.smul(speed).add(pos);
             },
             draw: function () {
-                dcl.circle(pos.x, pos.y, size, dcl.color(dcl.randomi(128, 255), dcl.randomi(128, 255), dcl.randomi(128, 255)), 0);
+                dcl.circle(pos.x, pos.y, size, color, 0);
             }
         }
     }
