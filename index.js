@@ -16,14 +16,14 @@ server.listen(port, function () {
     console.log("Starting server on port 5000");
 });
 
-var players = {};
+let players = {};
 io.on('connection', function (socket) {
+
     socket.on('new player', function () {
         players[socket.id] = {
             x: 300,
             y: 300
         };
-        io.sockets.emit("state", players);
     });
     socket.on('movement', function (data) {
         var player = players[socket.id] || {};
@@ -33,7 +33,9 @@ io.on('connection', function (socket) {
     });
     socket.on('disconnect', () => {
         delete players[socket.id];
-      });
+        socket.emit("kill", socket.id);
+    });
+
 });
 setInterval(function () {
     io.sockets.emit('state', players);

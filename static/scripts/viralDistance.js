@@ -2,7 +2,7 @@
 /** viralDistance */
 (function () {
     let scr, spiller, last;
-    let motstandere = [];
+    let motstandere = {};
 
     function setup() {
         scr = dcl.setupScreen(window.innerWidth, window.innerHeight);
@@ -21,13 +21,16 @@
         socket.on('state', function (players) {
             let ids = Object.keys(players);
             for (let i = 0; i < ids.length; i++) {
-                if(!motstandere[ids[i]]){
-                    motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);                    
+                if (!motstandere[ids[i]]) {
+                    motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);
                 } else {
                     motstandere[ids[i]].setPos(dcl.vector(players[ids[i]].x, players[ids[i]].y));
                 }
-                
+
             }
+        });
+        socket.on("kill", function (id) {
+            delete motstandere[id];
         });
         document.addEventListener("keydown", fangTaster);
     }
@@ -63,24 +66,24 @@
             retning: function (v) {
                 dir = v;
             },
-            grow: function(){
+            grow: function () {
                 size += 0.01;
-                if(size > 500){
+                if (size > 500) {
                     size = 500;
                 }
             },
             update: function () {
                 pos = dir.smul(speed).add(pos);
-                if(pos.x < 0-size){
+                if (pos.x < 0 - size) {
                     pos.x = scr.width + size;
                 }
-                if(pos.x > scr.width + size){
+                if (pos.x > scr.width + size) {
                     pos.x = 0 - size;
                 }
-                if(pos.y < 0 - size){
-                    pos.y = scr.height  + size;
+                if (pos.y < 0 - size) {
+                    pos.y = scr.height + size;
                 }
-                if(pos.y > scr.height + size){
+                if (pos.y > scr.height + size) {
                     pos.y = 0 - size;
                 }
             },
@@ -92,8 +95,9 @@
 
     function draw() {
         spiller.draw();
-        motstandere.forEach(m => {
-            m.draw();
+        let keys = Object.keys(motstandere);
+        keys.forEach(k => {
+            motstandere[k].draw();
         });
     }
 
