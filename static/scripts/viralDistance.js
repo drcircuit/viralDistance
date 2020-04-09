@@ -20,10 +20,10 @@
         socket.on('state', function (players) {
             let ids = Object.keys(players);
             for (let i = 0; i < ids.length; i++) {
-                if(!motstandere[i]){
-                    motstandere[i] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);                    
+                if(!motstandere[ids[i]]){
+                    motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);                    
                 } else {
-                    motstandere[i].setPos(dcl.vector(players[ids[i]].x, players[ids[i]].y));
+                    motstandere[ids[i]].setPos(dcl.vector(players[ids[i]].x, players[ids[i]].y));
                 }
                 
             }

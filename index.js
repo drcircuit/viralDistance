@@ -23,6 +23,7 @@ io.on('connection', function (socket) {
             x: 300,
             y: 300
         };
+        io.sockets.emit("state", players);
     });
     socket.on('movement', function (data) {
         var player = players[socket.id] || {};
