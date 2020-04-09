@@ -21,10 +21,11 @@ jobs:
         node-version: '12.x'
 
     - name: npm install, build, and test
+      working-directory: ./server
       run: |
         npm install
     - name: npm install gui
-      working-directory: ./static
+      working-directory: ./server/static
       run: |
         npm install
 
