@@ -9,24 +9,23 @@
         scr.setBgColor('black');
         document.body.style.backgroundColor = 'black';
         spiller = byggSpiller(dcl.vector(scr.width / 4, scr.widht / 4), 50);
+        let color = [dcl.randomi(64,255),dcl.randomi(64,255),dcl.randomi(64,255)];
+        spiller.setColor(color);
         const socket = io();
         socket.on('message', function (data) {
             console.log(data);
         });
-        socket.emit('new player');
+        socket.emit('new player', color);
         setInterval(function () {
             socket.emit('movement', { pos: spiller.getPos(), size: spiller.getSize() });
             spiller.grow();
         }, 1000 / 60);
         socket.on('state', function (players) {
             let ids = Object.keys(players);
+            motstandere = {};
             for (let i = 0; i < ids.length; i++) {
-                if (!motstandere[ids[i]]) {
-                    motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);
-                } else {
-                    motstandere[ids[i]].setPos(dcl.vector(players[ids[i]].x, players[ids[i]].y));
-                }
-
+                motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);
+                motstandere[ids[i]].setColor(players[ids[i]].color);
             }
         });
         socket.on("kill", function (id) {
@@ -54,6 +53,9 @@
         let color = dcl.color(dcl.randomi(128, 255), dcl.randomi(128, 255), dcl.randomi(128, 255));
 
         return {
+            setColor: function(rgb){
+                color = dcl.color(rgb[0], rgb[1], rgb[2]);
+            },
             getPos: function () {
                 return pos;
             },

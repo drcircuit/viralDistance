@@ -19,10 +19,11 @@ server.listen(port, function () {
 let players = {};
 io.on('connection', function (socket) {
 
-    socket.on('new player', function () {
+    socket.on('new player', function (color) {
         players[socket.id] = {
             x: 300,
-            y: 300
+            y: 300,
+            color: color
         };
     });
     socket.on('movement', function (data) {
