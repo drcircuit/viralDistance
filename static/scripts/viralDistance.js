@@ -16,6 +16,7 @@
         socket.emit('new player');
         setInterval(function () {
             socket.emit('movement', { pos: spiller.getPos(), size: spiller.getSize() });
+            spiller.grow();
         }, 1000 / 60);
         socket.on('state', function (players) {
             let ids = Object.keys(players);
@@ -48,6 +49,7 @@
         let dir = dcl.vector(0, 0);
         let speed = 4;
         let color = dcl.color(dcl.randomi(128, 255), dcl.randomi(128, 255), dcl.randomi(128, 255));
+
         return {
             getPos: function () {
                 return pos;
@@ -60,6 +62,12 @@
             },
             retning: function (v) {
                 dir = v;
+            },
+            grow: function(){
+                size += 0.01;
+                if(size > 500){
+                    size = 500;
+                }
             },
             update: function () {
                 pos = dir.smul(speed).add(pos);
