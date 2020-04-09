@@ -1,3 +1,4 @@
+
 /** viralDistance */
 (function () {
     let scr, spiller, last;
@@ -19,7 +20,12 @@
         socket.on('state', function (players) {
             let ids = Object.keys(players);
             for (let i = 0; i < ids.length; i++) {
-                motstandere[i] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);
+                if(!motstandere[i]){
+                    motstandere[i] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);                    
+                } else {
+                    motstandere[i].setPos(dcl.vector(players[ids[i]].x, players[ids[i]].y));
+                }
+                
             }
         });
         document.addEventListener("keydown", fangTaster);
@@ -57,6 +63,18 @@
             },
             update: function () {
                 pos = dir.smul(speed).add(pos);
+                if(pos.x < 0-size){
+                    pos.x = scr.width + size;
+                }
+                if(pos.x > scr.width + size){
+                    pos.x = 0 - size;
+                }
+                if(pos.y < 0 - size){
+                    pos.y = scr.height  + size;
+                }
+                if(pos.y > scr.height + size){
+                    pos.y = 0 - size;
+                }
             },
             draw: function () {
                 dcl.circle(pos.x, pos.y, size, color, 0);
