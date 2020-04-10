@@ -84,7 +84,7 @@
                 dir = v;
             },
             grow: function () {
-                size += 0.01;
+                size += 0.1;
                 if (size > 500) {
                     size = 500;
                 }
