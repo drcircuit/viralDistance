@@ -8,7 +8,7 @@
         scr = dcl.setupScreen(window.innerWidth, window.innerHeight);
         scr.setBgColor('black');
         document.body.style.backgroundColor = 'black';
-        spiller = byggSpiller(dcl.vector(scr.width / 4, scr.widht / 4), 50);
+        spiller = byggSpiller(dcl.vector(scr.width / 4, scr.widht / 4), 50, socket.io, name);
         let color = [dcl.randomi(64, 255), dcl.randomi(64, 255), dcl.randomi(64, 255)];
         spiller.setColor(color);
 
