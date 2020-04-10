@@ -19,28 +19,44 @@ server.listen(port, function () {
 let players = {};
 io.on('connection', function (socket) {
     socket.on('new player', function (color) {
-        players[socket.id] = {
-            x: 300*Math.random(),
-            y: 300*Math.random(),
-            color: color,
-            size: 50,
-            name: socket.id
-        };
+        try {
+            players[socket.id] = {
+                x: 300 * Math.random(),
+                y: 300 * Math.random(),
+                color: color,
+                size: 50,
+                name: socket.id
+            };
+        } catch (e) {
+            console.error(e);
+        }
     });
     socket.on('movement', function (data) {
-        var player = players[socket.id] || {};
-        player.x = data.pos.x;
-        player.y = data.pos.y;
-        player.size = data.size;
-        player.name = data.name;
+        try {
+            var player = players[socket.id] || {};
+            player.x = data.pos.x;
+            player.y = data.pos.y;
+            player.size = data.size;
+            player.name = data.name;
+        } catch (e) {
+            console.error(e);
+        }
     });
     socket.on('disconnect', () => {
-        delete players[socket.id];
-        socket.emit("kill", socket.id);
+        try {
+            delete players[socket.id];
+            socket.emit("kill", socket.id);
+        } catch (e) {
+            console.error(e);
+        }
     });
-    socket.on("hit", (what)=>{
-        players[what.id].size -= what.size / 10;
-        socket.emit("bang", what.id);
+    socket.on("hit", (what) => {
+        try {
+            players[what.id].size -= what.size / 10;
+            socket.emit("bang", what.id);
+        } catch (e) {
+            console.error(e);
+        }
     });
 
 });
