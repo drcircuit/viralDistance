@@ -58,6 +58,10 @@ io.on('connection', function (socket) {
             return;
         }
         try {
+            let p = players[what.id];
+            if(!p){
+                return;
+            }
             players[what.id].size -= what.size / 5;
             socket.emit("bang", what.id);
         } catch (e) {
