@@ -18,12 +18,12 @@ server.listen(port, function () {
 
 let players = {};
 io.on('connection', function (socket) {
-
     socket.on('new player', function (color) {
         players[socket.id] = {
-            x: 300,
-            y: 300,
-            color: color
+            x: 300*Math.random(),
+            y: 300*Math.random(),
+            color: color,
+            size: 50
         };
     });
     socket.on('movement', function (data) {
@@ -35,6 +35,10 @@ io.on('connection', function (socket) {
     socket.on('disconnect', () => {
         delete players[socket.id];
         socket.emit("kill", socket.id);
+    });
+    socket.on("hit", (id)=>{
+        players[id].size -= 10;
+        socket.emit("bang", id);
     });
 
 });

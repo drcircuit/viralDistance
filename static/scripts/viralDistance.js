@@ -3,15 +3,15 @@
 (function () {
     let scr, spiller, last;
     let motstandere = {};
-
+    const socket = io();
     function setup() {
         scr = dcl.setupScreen(window.innerWidth, window.innerHeight);
         scr.setBgColor('black');
         document.body.style.backgroundColor = 'black';
         spiller = byggSpiller(dcl.vector(scr.width / 4, scr.widht / 4), 50);
-        let color = [dcl.randomi(64,255),dcl.randomi(64,255),dcl.randomi(64,255)];
+        let color = [dcl.randomi(64, 255), dcl.randomi(64, 255), dcl.randomi(64, 255)];
         spiller.setColor(color);
-        const socket = io();
+        
         socket.on('message', function (data) {
             console.log(data);
         });
@@ -24,13 +24,19 @@
             let ids = Object.keys(players);
             motstandere = {};
             for (let i = 0; i < ids.length; i++) {
-                motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size);
+                motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size, ids[i]);
                 motstandere[ids[i]].setColor(players[ids[i]].color);
             }
         });
         socket.on("kill", function (id) {
             delete motstandere[id];
-        });
+        });  
+        socket.on("bang", function(id){
+            if(socket.id === id){
+                spiller.shrink();
+            }
+        })
+        
         document.addEventListener("keydown", fangTaster);
     }
 
@@ -47,13 +53,14 @@
         }
     }
 
-    function byggSpiller(pos, size) {
+    function byggSpiller(pos, size, id) {
         let dir = dcl.vector(0, 0);
         let speed = 4;
         let color = dcl.color(dcl.randomi(128, 255), dcl.randomi(128, 255), dcl.randomi(128, 255));
 
         return {
-            setColor: function(rgb){
+            id: id,
+            setColor: function (rgb) {
                 color = dcl.color(rgb[0], rgb[1], rgb[2]);
             },
             getPos: function () {
@@ -74,6 +81,12 @@
                     size = 500;
                 }
             },
+            shrink: function () {
+                if (size < 10) {
+                    window.location = "loose.html";
+                }
+                dir = dir.smul(-1);
+            },
             update: function () {
                 pos = dir.smul(speed).add(pos);
                 if (pos.x < 0 - size) {
@@ -91,15 +104,53 @@
             },
             draw: function () {
                 dcl.circle(pos.x, pos.y, size, color, 0);
+                dcl.text(id, pos.x, pos.y);
+            },
+            collides: function (enemy) {
+                let ep = enemy.getPos();
+                
+                let e = {
+                    x: ep.x,
+                    y: ep.y,
+                    size: enemy.getSize()    
+                }
+                let dx = e.x - pos.x;
+                let dy = e.y - pos.y;
+                let d = Math.sqrt(dx*dx+dy*dy);
+                if (d > size + e.size) {
+                    return false;
+                }
+                if (d < abs(size - e.size)) {
+                    return true;
+                }
+                if (d === 0 && size === e.size) {
+                    return true;
+                }
+                
+                let a = (size * size - e.size * e.size + d * d) / (2 * d);
+                let h = Math.sqrt(size * size - a * a);
+                let xm = pos.x + a * dx / d;
+                let ym = pos.y + a * dy / d;
+                let xs1 = xm + h * dy / d;
+                let xs2 = xm - h * dy / d;
+                let ys1 = ym - h * dx / d;
+                let ys2 = ym + h * dx / d;
+                return (xs1 >= 0 && ys1 >= 0) || (xs2 >= 0 && ys2 >= 0);
             }
         }
     }
 
     function draw() {
-        spiller.draw();
         let keys = Object.keys(motstandere);
         keys.forEach(k => {
             motstandere[k].draw();
+            if(socket.id === k){
+                return;
+            }
+            if(spiller.collides(motstandere[k])){
+                socket.emit("hit", k);
+                socket.emit("hit", socket.id);
+            }
         });
     }
 
