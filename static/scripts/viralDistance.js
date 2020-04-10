@@ -28,7 +28,11 @@
             for (let i = 0; i < ids.length; i++) {
                 motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size, ids[i], players[ids[i]].name);
                 motstandere[ids[i]].setColor(players[ids[i]].color);
+                if(ids[i]==socket.id){
+                    spiller.setSize(players[ids[i]].size);
+                }
             }
+
         });
         socket.on("kill", function (id) {
             delete motstandere[id];
@@ -70,6 +74,9 @@
             getSize: function () {
                 return size;
             },
+            setSize: function(si){
+                size = si;
+            },
             setPos: function (p) {
                 pos = p;
             },
@@ -88,6 +95,9 @@
                 }
                 dir = dir.smul(-1);
                 speed += 0.2;
+                if(speed > 20){
+                    speed = 20;
+                }
             },
             update: function () {
                 pos = dir.smul(speed).add(pos);
