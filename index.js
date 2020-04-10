@@ -62,7 +62,7 @@ io.on('connection', function (socket) {
             if(!p){
                 return;
             }
-            players[what.id].size -= what.size / 5;
+            players[what.id].size -= what.size / 10;
             if(players[what.id].size < 0){
                 players[what.id].size = 0;
             }

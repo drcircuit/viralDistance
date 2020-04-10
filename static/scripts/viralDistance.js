@@ -160,7 +160,7 @@
                 return;
             }
             if (spiller.collides(motstandere[k]) && !hit) {
-                socket.emit("hit", { id: k, size: spiller.getSize() });
+                // socket.emit("hit", { id: k, size: spiller.getSize() });
                 socket.emit("hit", { id: socket.id, size: motstandere[k].getSize() });
                 hit = true;
                 setTimeout(() => {
