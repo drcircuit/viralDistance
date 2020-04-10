@@ -32,6 +32,9 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('movement', function (data) {
+        if(!data){
+            return;
+        }
         try {
             var player = players[socket.id] || {};
             player.x = data.pos.x;
@@ -51,6 +54,9 @@ io.on('connection', function (socket) {
         }
     });
     socket.on("hit", (what) => {
+        if(!what){
+            return;
+        }
         try {
             players[what.id].size -= what.size / 10;
             socket.emit("bang", what.id);
