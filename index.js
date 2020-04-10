@@ -58,7 +58,7 @@ io.on('connection', function (socket) {
             return;
         }
         try {
-            players[what.id].size -= what.size / 10;
+            players[what.id].size -= what.size / 5;
             socket.emit("bang", what.id);
         } catch (e) {
             console.error(e);
