@@ -23,7 +23,8 @@ io.on('connection', function (socket) {
             x: 300*Math.random(),
             y: 300*Math.random(),
             color: color,
-            size: 50
+            size: 50,
+            name: name
         };
     });
     socket.on('movement', function (data) {

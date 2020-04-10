@@ -17,7 +17,7 @@
         });
         socket.emit('new player', color);
         setInterval(function () {
-            socket.emit('movement', { pos: spiller.getPos(), size: spiller.getSize() });
+            socket.emit('movement', { name: name, pos: spiller.getPos(), size: spiller.getSize() });
             if (Object.keys(motstandere).length >= 2) {
                 spiller.grow();
             }
@@ -26,7 +26,7 @@
             let ids = Object.keys(players);
             motstandere = {};
             for (let i = 0; i < ids.length; i++) {
-                motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size, ids[i]);
+                motstandere[ids[i]] = byggSpiller(dcl.vector(players[ids[i]].x, players[ids[i]].y), players[ids[i]].size, ids[i], players[ids[i]].name);
                 motstandere[ids[i]].setColor(players[ids[i]].color);
             }
         });
@@ -54,7 +54,7 @@
         }
     }
 
-    function byggSpiller(pos, size, id) {
+    function byggSpiller(pos, size, id, label) {
         let dir = dcl.vector(0, 0);
         let speed = 4;
         let color = dcl.color(dcl.randomi(128, 255), dcl.randomi(128, 255), dcl.randomi(128, 255));
@@ -106,7 +106,7 @@
             },
             draw: function () {
                 dcl.circle(pos.x, pos.y, size, color, 0);
-                dcl.text(name, pos.x, pos.y);
+                dcl.text(label, pos.x, pos.y);
             },
             collides: function (enemy) {
                 let ep = enemy.getPos();
