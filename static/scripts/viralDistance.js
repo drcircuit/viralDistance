@@ -85,6 +85,7 @@
                     window.location = "loose.html";
                 }
                 dir = dir.smul(-1);
+                speed += 0.2;
             },
             update: function () {
                 pos = dir.smul(speed).add(pos);
