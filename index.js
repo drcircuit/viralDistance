@@ -36,8 +36,9 @@ io.on('connection', function (socket) {
         delete players[socket.id];
         socket.emit("kill", socket.id);
     });
-    socket.on("hit", (id)=>{
-        players[id].size -= 10;
+    socket.on("hit", (what)=>{
+        
+        players[what.id].size -= what.size / 10;
         socket.emit("bang", id);
     });
 

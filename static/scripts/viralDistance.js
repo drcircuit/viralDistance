@@ -11,14 +11,16 @@
         spiller = byggSpiller(dcl.vector(scr.width / 4, scr.widht / 4), 50);
         let color = [dcl.randomi(64, 255), dcl.randomi(64, 255), dcl.randomi(64, 255)];
         spiller.setColor(color);
-        
+
         socket.on('message', function (data) {
             console.log(data);
         });
         socket.emit('new player', color);
         setInterval(function () {
             socket.emit('movement', { pos: spiller.getPos(), size: spiller.getSize() });
-            spiller.grow();
+            if (Object.keys(motstandere).length >= 2) {
+                spiller.grow();
+            }
         }, 1000 / 60);
         socket.on('state', function (players) {
             let ids = Object.keys(players);
@@ -30,13 +32,13 @@
         });
         socket.on("kill", function (id) {
             delete motstandere[id];
-        });  
-        socket.on("bang", function(id){
-            if(socket.id === id){
+        });
+        socket.on("bang", function (id) {
+            if (socket.id === id) {
                 spiller.shrink();
             }
         })
-        
+
         document.addEventListener("keydown", fangTaster);
     }
 
@@ -104,18 +106,18 @@
             },
             draw: function () {
                 dcl.circle(pos.x, pos.y, size, color, 0);
-                dcl.text(id, pos.x, pos.y);
+                dcl.text(name, pos.x, pos.y);
             },
             collides: function (enemy) {
                 let ep = enemy.getPos();
                 let e = {
                     x: ep.x,
                     y: ep.y,
-                    size: enemy.getSize()    
+                    size: enemy.getSize()
                 }
                 let dx = e.x - pos.x;
                 let dy = e.y - pos.y;
-                let d = Math.sqrt(dx*dx+dy*dy);
+                let d = Math.sqrt(dx * dx + dy * dy);
                 if (d > size + e.size) {
                     return false;
                 }
@@ -125,7 +127,7 @@
                 if (d === 0 && size === e.size) {
                     return true;
                 }
-                
+
                 let a = (size * size - e.size * e.size + d * d) / (2 * d);
                 let h = Math.sqrt(size * size - a * a);
                 let xm = pos.x + a * dx / d;
@@ -144,14 +146,14 @@
 
         keys.forEach(k => {
             motstandere[k].draw();
-            if(socket.id === k){
+            if (socket.id === k) {
                 return;
             }
-            if(spiller.collides(motstandere[k]) && !hit){
-                socket.emit("hit", k);
-                socket.emit("hit", socket.id);
+            if (spiller.collides(motstandere[k]) && !hit) {
+                socket.emit("hit", { id: k, size: spiller.getSize() });
+                socket.emit("hit", { id: socket.id, size: motstandere[k].getSize() });
                 hit = true;
-                setTimeout(()=>{
+                setTimeout(() => {
                     hit = false;
                 }, 1000);
             }
@@ -170,6 +172,7 @@
         update();
         requestAnimationFrame(gameLoop)
     }
+    let name = prompt("Skriv inn navn:");
     setup();
     gameLoop(0);
 })();
