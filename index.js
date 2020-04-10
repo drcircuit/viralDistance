@@ -21,8 +21,8 @@ io.on('connection', function (socket) {
     socket.on('new player', function (color) {
         try {
             players[socket.id] = {
-                x: 300 * Math.random(),
-                y: 300 * Math.random(),
+                x: Math.random(),
+                y: Math.random(),
                 color: color,
                 size: 50,
                 name: socket.id
