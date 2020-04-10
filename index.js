@@ -24,7 +24,7 @@ io.on('connection', function (socket) {
             y: 300*Math.random(),
             color: color,
             size: 50,
-            name: name
+            name: socket.id
         };
     });
     socket.on('movement', function (data) {
@@ -32,6 +32,7 @@ io.on('connection', function (socket) {
         player.x = data.pos.x;
         player.y = data.pos.y;
         player.size = data.size;
+        player.name = data.name;
     });
     socket.on('disconnect', () => {
         delete players[socket.id];
