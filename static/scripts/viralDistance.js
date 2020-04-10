@@ -155,7 +155,7 @@
                 hit = true;
                 setTimeout(() => {
                     hit = false;
-                }, 1000);
+                }, 500);
             }
         });
     }
