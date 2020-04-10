@@ -41,7 +41,6 @@
     }
 
     function fangTaster(event) {
-        console.log(event);
         if (event.keyCode === KEYS.LEFT || event.keyCode === KEYS.A) {
             spiller.retning(dcl.vector(-1, 0));
         } else if (event.keyCode === KEYS.RIGHT || event.keyCode === KEYS.D) {
@@ -108,7 +107,6 @@
             },
             collides: function (enemy) {
                 let ep = enemy.getPos();
-                
                 let e = {
                     x: ep.x,
                     y: ep.y,
@@ -139,17 +137,22 @@
             }
         }
     }
-
+    let hit = false;
     function draw() {
         let keys = Object.keys(motstandere);
+
         keys.forEach(k => {
             motstandere[k].draw();
             if(socket.id === k){
                 return;
             }
-            if(spiller.collides(motstandere[k])){
+            if(spiller.collides(motstandere[k]) && !hit){
                 socket.emit("hit", k);
                 socket.emit("hit", socket.id);
+                hit = true;
+                setTimeout(()=>{
+                    hit = false;
+                }, 1000);
             }
         });
     }
